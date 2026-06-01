@@ -1,4 +1,5 @@
 const express = require('express');
+const {validatePost, validateUpdate} = require('./middleware/validation')
 const app = express();
 app.use(express.json()); // Parse JSON bodies
 
@@ -12,8 +13,32 @@ app.get('/todos', (req, res) => {
   res.status(200).json(todos); // Send array as JSON
 });
 
+//GET Single - Read
+app.get('/todos/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const todo = todos.find(t => t.id === id);
+  if (!todo) {
+    return res.status(404).json({
+      message: "Task not found"
+    });
+  }
+  res.status(200).json(todo);
+})
+
+//GET only active reads
+app.get('/todos/active', (req, res) => {
+  const activeTodos = todos.find(t => t.status !== "completed");
+  if (!todo) {
+    return res.status(404).json({
+      message: "You have no active tasks"
+    });
+  }
+  res.status(200).json({"All active todos":activeTodos});
+})
+
+
 // POST New – Create
-app.post('/todos', (req, res) => {
+app.post('/todos', validatePost, (req, res) => {
   const newTodo = { id: todos.length + 1, ...req.body }; // Auto-ID
   todos.push(newTodo);
   res.status(201).json(newTodo); // Echo back

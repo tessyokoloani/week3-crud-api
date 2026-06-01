@@ -81,7 +81,7 @@ app.get('/todos/completed', (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(500).json({ error: 'Server error!', "error": err.message });
+  res.status(500).json({ error: 'Server error!', "error-message": err.message });
 });
 
 const PORT = 3002;

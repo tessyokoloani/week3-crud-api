@@ -39,18 +39,14 @@ app.get('/todos/active', (req, res) => {
 
 // POST New – Create
 app.post('/todos', (req, res) => {
-  console.log(req.body)
   const lastId = todos.length;
-  console.log(lastId)
   if (!lastId){
-    console.log(lastId)
     res.status(501).json(Error.message)
 
   }
   const newTodo = { id: lastId + 1, ...req.body }; // Auto-ID
   if (newTodo){
     todos.push(newTodo);
-    console.log(todos)
     res.status(201).json(newTodo); // Echo back new Todo
   }else{
     res.status(404).json({"message":"New Todo not found"})
@@ -72,9 +68,9 @@ app.delete('/todos/:id', (req, res) => {
   todos = todos.filter((t) => t.id !== id); // Array.filter() – non-destructive
   if (todos.length === initialLength)
     return res.status(404).json({ error: 'Not found' });
-  // Reassign all IDs sequentially
+  // Reassigning all IDs sequentially
   todos.forEach((todo, index) => {
-      todo.id = index + 1;  // IDs become 1, 2, 3...
+      todo.id = index + 1; 
   })
   res.status(204).send(); // Silent success
 });
@@ -85,7 +81,7 @@ app.get('/todos/completed', (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(500).json({ error: 'Server error!' });
+  res.status(500).json({ error: 'Server error!', "error": err.message });
 });
 
 const PORT = 3002;

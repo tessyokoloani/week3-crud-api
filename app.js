@@ -28,7 +28,7 @@ app.get('/todos/:id', (req, res) => {
 //GET only active reads
 app.get('/todos/active', (req, res) => {
   const activeTodos = todos.find(t => t.status !== "completed");
-  if (!todo) {
+  if (!activeTodos) {
     return res.status(404).json({
       message: "You have no active tasks"
     });
@@ -38,10 +38,23 @@ app.get('/todos/active', (req, res) => {
 
 
 // POST New – Create
-app.post('/todos', validatePost, (req, res) => {
-  const newTodo = { id: todos.length + 1, ...req.body }; // Auto-ID
-  todos.push(newTodo);
-  res.status(201).json(newTodo); // Echo back
+app.post('/todos', (req, res) => {
+  console.log(req.body)
+  const lastId = todos.length;
+  console.log(lastId)
+  if (!lastId){
+    console.log(lastId)
+    res.status(501).json(Error.message)
+
+  }
+  const newTodo = { id: lastId + 1, ...req.body }; // Auto-ID
+  if (newTodo){
+    todos.push(newTodo);
+    console.log(todos)
+    res.status(201).json(newTodo); // Echo back new Todo
+  }else{
+    res.status(404).json({"message":"New Todo not found"})
+  }
 });
 
 // PATCH Update – Partial
@@ -59,6 +72,10 @@ app.delete('/todos/:id', (req, res) => {
   todos = todos.filter((t) => t.id !== id); // Array.filter() – non-destructive
   if (todos.length === initialLength)
     return res.status(404).json({ error: 'Not found' });
+  // Reassign all IDs sequentially
+  todos.forEach((todo, index) => {
+      todo.id = index + 1;  // IDs become 1, 2, 3...
+  })
   res.status(204).send(); // Silent success
 });
 

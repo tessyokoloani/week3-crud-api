@@ -10,7 +10,7 @@ function validatePost (req, res, next) {
 
   const validStatus = [true, false];
 
-  if (status !== undefined && !validStatus.includes(status)) {
+  if (completed !== undefined && !validStatus.includes(completed)) {
     return res.status(400).json({
       message: "Invalid status"
     });
